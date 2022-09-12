@@ -5,9 +5,10 @@
     "dotnet lambda help",
     "All the command line options for the Lambda command can be specified in this file."
   ],
-  "profile": "",
-  "region": "",
+  "profile": "sbaldwin:dev",
+  "region": "ap-southeast-2",
   "configuration": "Release",
+  "s3-bucket": "sbaldwin-dev",
   "s3-prefix": "Productionize/",
   "template": "serverless.template",
   "template-parameters": ""
