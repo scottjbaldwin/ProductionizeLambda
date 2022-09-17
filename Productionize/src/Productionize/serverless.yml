@@ -50,11 +50,13 @@ Resources:
         ProxyResource:
           Type: Api
           Properties:
+            RestApiId: !Ref ProductionizeApi
             Path: /{proxy+}
             Method: ANY
         RootResource:
           Type: Api
           Properties:
+            RestApiId: !Ref ProductionizeApi
             Path: /
             Method: ANY
 
@@ -64,9 +66,15 @@ Resources:
       LogGroupName: !Sub "/aws/lambda/${AspNetCoreFunction}"
       RetentionInDays: !Ref LogRetentionPeriod
 
+  ProductionizeApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      TracingEnabled: true
+
 Outputs:
   ApiURL:
     Description: API endpoint URL for Prod environment
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
+      !Sub https://${ProductionizeApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
 
