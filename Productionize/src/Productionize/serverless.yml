@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: An AWS Serverless Application that uses the ASP.NET Core framework running in Amazon Lambda.
+Parameters:
+  LogRetentionPeriod:
+    Type: String
+    Description: The number of days the lambda logs are retained for
+    Default: 7
+
+Resources:
+  CloudWatchLogsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CloudWatchLogsPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Action:
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}-AspNetCoreFunction-*'
+      Roles:
+        - !Ref ProductionizeApiRole
+
+  ProductionizeApiRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: Allow
+            Action: 'sts:AssumeRole'
+            Principal:
+              Service: lambda.amazonaws.com
+      ManagedPolicyArns:
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy'
+
+  AspNetCoreFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: Productionize::Productionize.LambdaEntryPoint::FunctionHandlerAsync
+      Runtime: dotnet6
+      CodeUri: ""
+      MemorySize: 2048
+      Timeout: 30
+      Role: !GetAtt
+          - ProductionizeApiRole
+          - Arn
+      Layers:
+        - arn:aws:lambda:ap-southeast-2:580247275435:layer:LambdaInsightsExtension:21
+      Events:
+        ProxyResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ProductionizeApi
+            Path: /{proxy+}
+            Method: ANY
+        RootResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ProductionizeApi
+            Path: /
+            Method: ANY
+
+  ProductionizeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${AspNetCoreFunction}"
+      RetentionInDays: !Ref LogRetentionPeriod
+
+  ProductionizeApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      TracingEnabled: true
+
+Outputs:
+  ApiURL:
+    Description: API endpoint URL for Prod environment
+    Value:
+      !Sub https://${ProductionizeApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
+
