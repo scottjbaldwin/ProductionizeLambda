@@ -41,7 +41,7 @@ Resources:
       Handler: Productionize::Productionize.LambdaEntryPoint::FunctionHandlerAsync
       Runtime: dotnet6
       CodeUri: ""
-      MemorySize: 256
+      MemorySize: 2048
       Timeout: 30
       Role: !GetAtt
           - ProductionizeApiRole
