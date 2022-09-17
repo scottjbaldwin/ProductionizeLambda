@@ -8,6 +8,34 @@ Parameters:
     Default: 7
 
 Resources:
+  CloudWatchLogsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CloudWatchLogsPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Action:
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:*'
+      Roles:
+        - !Ref ProductionizeApiRole
+
+  ProductionizeApiRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: Allow
+            Action: 'sts:AssumeRole'
+            Principal:
+              Service: lambda.amazonaws.com
   AspNetCoreFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -16,9 +44,9 @@ Resources:
       CodeUri: ""
       MemorySize: 256
       Timeout: 30
-      Role: null
-      Policies:
-      - AWSLambda_FullAccess
+      Role: !GetAtt
+          - ProductionizeApiRole
+          - Arn
       Events:
         ProxyResource:
           Type: Api
