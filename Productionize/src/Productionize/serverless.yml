@@ -1,6 +1,12 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: An AWS Serverless Application that uses the ASP.NET Core framework running in Amazon Lambda.
+Parameters:
+  LogRetentionPeriod:
+    Type: String
+    Description: The number of days the lambda logs are retained for
+    Default: 7
+
 Resources:
   AspNetCoreFunction:
     Type: AWS::Serverless::Function
@@ -24,6 +30,13 @@ Resources:
           Properties:
             Path: /
             Method: ANY
+
+  ProductionizeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${AspNetCoreFunction}"
+      RetentionInDays: !Ref LogRetentionPeriod
+
 Outputs:
   ApiURL:
     Description: API endpoint URL for Prod environment

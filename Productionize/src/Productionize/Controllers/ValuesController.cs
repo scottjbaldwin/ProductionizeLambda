@@ -16,6 +16,7 @@ public class ValuesController : ControllerBase
     [HttpGet("{id}")]
     public string Get(int id)
     {
+        Console.WriteLine("I can log to a logstream!!!!");
         return "value";
     }
 
