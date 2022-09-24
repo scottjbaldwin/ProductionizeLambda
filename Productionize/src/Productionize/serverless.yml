@@ -65,6 +65,54 @@ Resources:
             Path: /
             Method: ANY
 
+  AspNetCoreFunctionAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Alarm for API lambda errors
+      Namespace: "AWS/Lambda"
+      MetricName: Errors
+      Dimensions:
+        -
+          Name: FunctionName
+          Value: !Ref AspNetCoreFunction
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+
+  ApiGateway5XXAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Alarm for API gateway 5XX errors
+      Namespace: "AWS/ApiGateway"
+      MetricName: 5XXError
+      Dimensions:
+        -
+          Name: ApiName
+          Value: !Ref AWS::StackName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+
+  ApiGateway4XXAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Alarm for API gateway 4XX errors
+      Namespace: "AWS/ApiGateway"
+      MetricName: 4XXError
+      Dimensions:
+        -
+          Name: ApiName
+          Value: !Ref AWS::StackName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 20
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+
   ProductionizeLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
