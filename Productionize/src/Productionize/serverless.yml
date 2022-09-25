@@ -6,6 +6,14 @@ Parameters:
     Type: String
     Description: The number of days the lambda logs are retained for
     Default: 7
+  Environment:
+    Type: String
+    Description: The name of the environment this template is being deployed to, e.g. dev, test, stg, prod
+    AllowedValues:
+      - dev
+      - test
+      - stg
+      - prod
 
 Resources:
   CloudWatchLogsPolicy:
@@ -80,6 +88,8 @@ Resources:
       EvaluationPeriods: 1
       Threshold: 1
       ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref AlarmTopic
 
   ApiGateway5XXAlarm:
     Type: AWS::CloudWatch::Alarm
@@ -96,6 +106,8 @@ Resources:
       EvaluationPeriods: 1
       Threshold: 1
       ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref AlarmTopic
 
   ApiGateway4XXAlarm:
     Type: AWS::CloudWatch::Alarm
@@ -112,6 +124,14 @@ Resources:
       EvaluationPeriods: 1
       Threshold: 20
       ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref AlarmTopic
+
+  AlarmTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: !Sub 'Application Alarms Topic for ${Environment}'
+      TopicName: !Sub '${Environment}-Application-Alarm-Topic'
 
   ProductionizeLogGroup:
     Type: AWS::Logs::LogGroup
