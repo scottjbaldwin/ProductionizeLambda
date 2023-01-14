@@ -5,6 +5,11 @@ namespace Productionize.Controllers;
 [Route("api/[controller]")]
 public class ValuesController : ControllerBase
 {
+    IConfiguration _config;
+    public ValuesController(IConfiguration config)
+    {
+        _config = config;
+    }
     // GET api/values
     [HttpGet]
     public IEnumerable<string> Get()
@@ -17,6 +22,10 @@ public class ValuesController : ControllerBase
     public string Get(int id)
     {
         Console.WriteLine("I can log to a logstream!!!!");
+        if (!string.IsNullOrEmpty(_config["MyValue"]))
+        {
+            return _config["MyValue"];
+        }
         return "value";
     }
 
