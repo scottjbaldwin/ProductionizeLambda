@@ -35,6 +35,12 @@ public class LambdaEntryPoint :
     protected override void Init(IWebHostBuilder builder)
     {
         builder
+            .ConfigureAppConfiguration(
+                builder => 
+                {
+                    builder.AddSystemsManager("/Productionize");
+                }
+            )
             .UseStartup<Startup>();
     }
 

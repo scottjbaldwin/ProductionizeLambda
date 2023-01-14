@@ -31,6 +31,22 @@ Resources:
             Resource: !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AWS::StackName}-AspNetCoreFunction-*'
       Roles:
         - !Ref ProductionizeApiRole
+  
+  ConfigSSMPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: ConfigSSMPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Action:
+              - 'ssm:GetParameter*'
+            Resource: !Sub 'arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*'
+      Roles:
+        - !Ref ProductionizeApiRole
+
 
   ProductionizeApiRole:
     Type: AWS::IAM::Role

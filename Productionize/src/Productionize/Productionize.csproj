@@ -12,6 +12,7 @@
     <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager" Version="4.0.0" />
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="7.2.0" />
     <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk" Version="2.9.1" />
   </ItemGroup>
