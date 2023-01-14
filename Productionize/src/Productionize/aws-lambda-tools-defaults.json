@@ -11,5 +11,6 @@
   "s3-bucket": "sbaldwin-dev",
   "s3-prefix": "Productionize/",
   "template": "serverless.yml",
+  "stack-name": "productionize",
   "template-parameters": ""
 }
