@@ -14,7 +14,14 @@ public class ValuesController : ControllerBase
     [HttpGet]
     public IEnumerable<string> Get()
     {
-        return new string[] { "value1", "value2" };
+        var env = Environment.GetEnvironmentVariables();
+        var accessKey = env["AWS_ACCESS_KEY_ID"] as string;
+        var secretKey = env["AWS_SECRET_ACCESS_KEY"] as string;
+        secretKey = secretKey?.Substring(0, 5) + "****************";
+        var sessionToken = env["AWS_SESSION_TOKEN"] as string;
+        sessionToken = sessionToken?.Substring(0, 5) + "****************";
+
+        return new string[] { accessKey ?? "ACCESS KEY NOT FOUND", secretKey, sessionToken };
     }
 
     // GET api/values/5
