@@ -21,7 +21,9 @@ public class ValuesController : ControllerBase
         var sessionToken = env["AWS_SESSION_TOKEN"] as string;
         sessionToken = sessionToken?.Substring(0, 5) + "****************";
 
-        return new string[] { accessKey ?? "ACCESS KEY NOT FOUND", secretKey, sessionToken };
+        var region = env["AWS_REGION"] as string;
+
+        return new string[] { accessKey ?? "ACCESS KEY NOT FOUND", secretKey, sessionToken, region};
     }
 
     // GET api/values/5
